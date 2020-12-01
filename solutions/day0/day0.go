@@ -2,9 +2,37 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"../../shared"
 )
+
+// Day0Computer computes the solutions for day 0
+type Day0Computer struct {
+	input shared.Input
+}
+
+func (d *Day0Computer) part1() (shared.Result, error) {
+
+	lines := shared.ToIntSlice(d.input)
+	totalFuelPartOne := 0
+
+	for _, s := range lines {
+		totalFuelPartOne += fuelRequired(s)
+	}
+	return strconv.Itoa(totalFuelPartOne), nil
+}
+
+func (d *Day0Computer) part2() (shared.Result, error) {
+
+	lines := shared.ToIntSlice(d.input)
+	totalFuelPartTwo := 0
+
+	for _, s := range lines {
+		totalFuelPartTwo += fuelRequiredPartTwo(s)
+	}
+	return strconv.Itoa(totalFuelPartTwo), nil
+}
 
 func fuelRequired(mass int) int {
 	// Go does floor division for ints
@@ -22,21 +50,13 @@ func fuelRequiredPartTwo(mass int) int {
 func main() {
 
 	// Solution to Day1 of 2019 to test everything is working
-	floatLines := shared.ReadIntLines(0)
+	day0Computer := Day0Computer{shared.ReadStringLines(0)}
 
-	totalFuelPartOne := 0
+	pt1, _ := day0Computer.part1()
 
-	for _, s := range floatLines {
-		totalFuelPartOne += fuelRequired(s)
-	}
+	fmt.Println("Question 1\nTotal fuel required: ", pt1)
 
-	fmt.Println("Question 1\nTotal fuel required: ", int(totalFuelPartOne))
+	pt2, _ := day0Computer.part2()
 
-	totalFuelPartTwo := 0
-
-	for _, s := range floatLines {
-		totalFuelPartTwo += fuelRequiredPartTwo(s)
-	}
-
-	fmt.Println("Question 2\nTotal fuel required: ", totalFuelPartTwo)
+	fmt.Println("Question 1\nTotal fuel required: ", pt2)
 }

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 
 	"../../shared"
 )
@@ -28,39 +30,52 @@ func buildMap(lines []int) map[int]pair {
 	return pairMap
 }
 
-func q1(lines []int) {
+// Day1Computer computes the solutions for day 1
+type Day1Computer struct {
+	input shared.Input
+}
+
+func (d *Day1Computer) part1() (shared.Result, error) {
+	lines := shared.ToIntSlice(d.input)
 	q1Map := make(map[int]bool)
+
 	for _, l := range lines {
 		toFind := target - l
 		if q1Map[toFind] {
-			fmt.Printf("\nQuestion 1:\n%v * %v = %v\n", toFind, l, toFind*l)
-			break
+			return strconv.Itoa(toFind * l), nil
 		}
 		q1Map[l] = true
 	}
+	return "", errors.New("Could not find matching numbers")
 }
 
-func q2(lines []int) {
+func (d *Day1Computer) part2() (shared.Result, error) {
+	lines := shared.ToIntSlice(d.input)
 	q2Map := buildMap(lines)
 
 	for _, l := range lines {
 		if intPair, ok := q2Map[target-l]; ok {
-			a := intPair.a
-			b := intPair.b
-			fmt.Printf("\nQuestion 2:\n%v * %v * %v = %v\n", a, b, l, a*b*l)
-			break
+			return strconv.Itoa(intPair.a * intPair.b * l), nil
 		}
 	}
+	return "", errors.New("Could not find matching numbers")
 }
 
 func main() {
 
 	fmt.Println("AoC 2020 Day 01")
 
-	lines := shared.ReadIntLines(1)
+	day1 := Day1Computer{shared.ReadStringLines(1)}
 
-	q1(lines)
+	if ans, err := day1.part1(); err == nil {
+		fmt.Println("Question 1:", ans)
+	} else {
+		fmt.Println("Question 1:", err)
+	}
 
-	q2(lines)
-
+	if ans, err := day1.part2(); err == nil {
+		fmt.Println("Question 1:", ans)
+	} else {
+		fmt.Println("Question 1:", err)
+	}
 }

@@ -46,10 +46,14 @@ func ReadStringLines(dayNumber int) []string {
 
 // ReadIntLines - Reads all lines from the file to a int slice
 func ReadIntLines(dayNumber int) []int {
-	scanner := getScannerForDay(dayNumber)
+	return ToIntSlice(ReadStringLines(dayNumber))
+}
+
+// ToIntSlice converts a slice of strings to a slice of ints
+func ToIntSlice(stringSlice []string) []int {
 	var lines []int
-	for scanner.Scan() {
-		converted, _ := strconv.Atoi(scanner.Text())
+	for _, str := range stringSlice {
+		converted, _ := strconv.Atoi(str)
 		lines = append(lines, converted)
 	}
 	return lines
