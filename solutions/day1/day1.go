@@ -67,15 +67,9 @@ func main() {
 
 	day1 := Day1Computer{shared.ReadStringLines(1)}
 
-	if ans, err := day1.part1(); err == nil {
-		fmt.Println("Question 1:", ans)
-	} else {
-		fmt.Println("Question 1:", err)
-	}
+	ans1, err1 := day1.part1()
+	fmt.Println("Question 1:", ans1, err1)
 
-	if ans, err := day1.part2(); err == nil {
-		fmt.Println("Question 1:", ans)
-	} else {
-		fmt.Println("Question 1:", err)
-	}
+	ans2, err2 := day1.part2()
+	fmt.Println("Question 1:", ans2, err2)
 }
