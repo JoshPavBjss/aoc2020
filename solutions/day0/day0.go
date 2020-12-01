@@ -1,27 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"../../shared"
 )
-
-func readFileContents(filePath string) []string {
-	file, err := os.Open(filePath)
-
-	if err == nil {
-		var lines []string
-		scanner := bufio.NewScanner(file)
-		for scanner.Scan() {
-			lines = append(lines, scanner.Text())
-		}
-		return lines
-	}
-
-	panic(err)
-}
 
 func fuelRequired(mass int) int {
 	// Go does floor division for ints
