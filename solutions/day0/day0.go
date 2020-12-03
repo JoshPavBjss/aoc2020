@@ -1,20 +1,18 @@
-package main
+package days
 
 import (
-	"fmt"
 	"strconv"
 
 	"../../shared"
 )
 
 // Day0Computer computes the solutions for day 0
-type Day0Computer struct {
-	input shared.Input
-}
+type Day0Computer struct{}
 
-func (d *Day0Computer) part1() (shared.Result, error) {
+// Part1 day0
+func (d *Day0Computer) Part1(input shared.Input) (shared.Result, error) {
 
-	lines := shared.ToIntSlice(d.input)
+	lines := shared.ToIntSlice(input)
 	totalFuelPartOne := 0
 
 	for _, s := range lines {
@@ -23,9 +21,10 @@ func (d *Day0Computer) part1() (shared.Result, error) {
 	return strconv.Itoa(totalFuelPartOne), nil
 }
 
-func (d *Day0Computer) part2() (shared.Result, error) {
+// Part2 day0
+func (d *Day0Computer) Part2(input shared.Input) (shared.Result, error) {
 
-	lines := shared.ToIntSlice(d.input)
+	lines := shared.ToIntSlice(input)
 	totalFuelPartTwo := 0
 
 	for _, s := range lines {
@@ -45,18 +44,4 @@ func fuelRequiredPartTwo(mass int) int {
 		return fuelRequired + fuelRequiredPartTwo(fuelRequired)
 	}
 	return 0
-}
-
-func main() {
-
-	// Solution to Day1 of 2019 to test everything is working
-	day0Computer := Day0Computer{shared.ReadStringLines(0)}
-
-	pt1, _ := day0Computer.part1()
-
-	fmt.Println("Question 1\nTotal fuel required: ", pt1)
-
-	pt2, _ := day0Computer.part2()
-
-	fmt.Println("Question 1\nTotal fuel required: ", pt2)
 }

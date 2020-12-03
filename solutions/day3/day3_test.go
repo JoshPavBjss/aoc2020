@@ -8,14 +8,22 @@ import (
 
 func testInput() shared.Input {
 	return shared.Input{
-		"1-3 a: abcde",
-		"1-3 b: cdefg",
-		"2-9 c: ccccccccc",
+		"..##.......",
+		"#...#...#..",
+		".#....#..#.",
+		"..#.#...#.#",
+		".#...##..#.",
+		"..#.##.....",
+		".#.#.#....#",
+		".#........#",
+		"#.##...#...",
+		"#...##....#",
+		".#..#...#.#",
 	}
 }
 
 func TestPart1(t *testing.T) {
-	testDay := &Day2Computer{}
+	testDay := &Day3Computer{}
 
 	res, err := testDay.Part1(testInput())
 
@@ -23,13 +31,13 @@ func TestPart1(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 
-	if res != "2" {
+	if res != "7" {
 		t.Fatalf("Wrong result: %s", res)
 	}
 }
 
 func TestPart2(t *testing.T) {
-	testDay := &Day2Computer{}
+	testDay := &Day3Computer{}
 
 	res, err := testDay.Part2(testInput())
 
@@ -37,7 +45,7 @@ func TestPart2(t *testing.T) {
 		t.Fatalf(err.Error())
 	}
 
-	if res != "1" {
+	if res != "336" {
 		t.Fatalf("Wrong result: %s", res)
 	}
 }

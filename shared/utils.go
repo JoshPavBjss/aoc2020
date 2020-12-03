@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-const inputFilePath = "/Users/josh.paveley/workspace/aoc/inputs/day%v/day%v.txt"
+const inputFilePath = "/Users/josh.paveley/workspace/aoc/inputs/day%v.txt"
 
 func check(e error) {
 	if e != nil {
@@ -16,7 +16,7 @@ func check(e error) {
 }
 
 func getInputPath(day int) string {
-	return fmt.Sprintf(inputFilePath, day, day)
+	return fmt.Sprintf(inputFilePath, day)
 }
 
 func openFileForDay(day int) *os.File {

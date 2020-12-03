@@ -1,8 +1,7 @@
-package main
+package days
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"../../shared"
@@ -31,12 +30,11 @@ func buildMap(lines []int) map[int]pair {
 }
 
 // Day1Computer computes the solutions for day 1
-type Day1Computer struct {
-	input shared.Input
-}
+type Day1Computer struct{}
 
-func (d *Day1Computer) part1() (shared.Result, error) {
-	lines := shared.ToIntSlice(d.input)
+// Part1 day1
+func (d *Day1Computer) Part1(input shared.Input) (shared.Result, error) {
+	lines := shared.ToIntSlice(input)
 	q1Map := make(map[int]bool)
 
 	for _, l := range lines {
@@ -49,8 +47,9 @@ func (d *Day1Computer) part1() (shared.Result, error) {
 	return "", errors.New("Could not find matching numbers")
 }
 
-func (d *Day1Computer) part2() (shared.Result, error) {
-	lines := shared.ToIntSlice(d.input)
+// Part2 day1
+func (d *Day1Computer) Part2(input shared.Input) (shared.Result, error) {
+	lines := shared.ToIntSlice(input)
 	q2Map := buildMap(lines)
 
 	for _, l := range lines {
@@ -59,17 +58,4 @@ func (d *Day1Computer) part2() (shared.Result, error) {
 		}
 	}
 	return "", errors.New("Could not find matching numbers")
-}
-
-func main() {
-
-	fmt.Println("AoC 2020 Day 01")
-
-	day1 := Day1Computer{shared.ReadStringLines(1)}
-
-	ans1, err1 := day1.part1()
-	fmt.Println("Question 1:", ans1, err1)
-
-	ans2, err2 := day1.part2()
-	fmt.Println("Question 1:", ans2, err2)
 }

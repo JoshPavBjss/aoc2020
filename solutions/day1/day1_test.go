@@ -1,4 +1,4 @@
-package main
+package days
 
 import (
 	"testing"
@@ -18,9 +18,9 @@ func testInput() shared.Input {
 }
 
 func TestPart1(t *testing.T) {
-	testDay := &Day1Computer{testInput()}
+	testDay := &Day1Computer{}
 
-	res, err := testDay.part1()
+	res, err := testDay.Part1(testInput())
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -32,9 +32,9 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	testDay := &Day1Computer{testInput()}
+	testDay := &Day1Computer{}
 
-	res, err := testDay.part2()
+	res, err := testDay.Part2(testInput())
 
 	if err != nil {
 		t.Fatalf(err.Error())

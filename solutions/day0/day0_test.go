@@ -1,4 +1,4 @@
-package main
+package days
 
 import (
 	"testing"
@@ -7,9 +7,9 @@ import (
 )
 
 func TestPart1_1(t *testing.T) {
-	testDay := &Day0Computer{shared.Input{"12"}}
+	testDay := &Day0Computer{}
 
-	res, err := testDay.part1()
+	res, err := testDay.Part1(shared.Input{"12"})
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -21,9 +21,9 @@ func TestPart1_1(t *testing.T) {
 }
 
 func TestPart1_2(t *testing.T) {
-	testDay := &Day0Computer{shared.Input{"14"}}
+	testDay := &Day0Computer{}
 
-	res, err := testDay.part1()
+	res, err := testDay.Part1(shared.Input{"14"})
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -35,9 +35,9 @@ func TestPart1_2(t *testing.T) {
 }
 
 func TestPart1_3(t *testing.T) {
-	testDay := &Day0Computer{shared.Input{"1969"}}
+	testDay := &Day0Computer{}
 
-	res, err := testDay.part1()
+	res, err := testDay.Part1(shared.Input{"1969"})
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -49,9 +49,9 @@ func TestPart1_3(t *testing.T) {
 }
 
 func TestPart1_4(t *testing.T) {
-	testDay := &Day0Computer{shared.Input{"100756"}}
+	testDay := &Day0Computer{}
 
-	res, err := testDay.part1()
+	res, err := testDay.Part1(shared.Input{"100756"})
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -63,9 +63,9 @@ func TestPart1_4(t *testing.T) {
 }
 
 func TestPart2_1(t *testing.T) {
-	testDay := &Day0Computer{shared.Input{"14"}}
+	testDay := &Day0Computer{}
 
-	res, err := testDay.part2()
+	res, err := testDay.Part2(shared.Input{"14"})
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -77,9 +77,9 @@ func TestPart2_1(t *testing.T) {
 }
 
 func TestPart2_2(t *testing.T) {
-	testDay := &Day0Computer{shared.Input{"1969"}}
+	testDay := &Day0Computer{}
 
-	res, err := testDay.part2()
+	res, err := testDay.Part2(shared.Input{"1969"})
 
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -91,9 +91,9 @@ func TestPart2_2(t *testing.T) {
 }
 
 func TestPart2_3(t *testing.T) {
-	testDay := &Day0Computer{shared.Input{"100756"}}
+	testDay := &Day0Computer{}
 
-	res, err := testDay.part2()
+	res, err := testDay.Part2(shared.Input{"100756"})
 
 	if err != nil {
 		t.Fatalf(err.Error())

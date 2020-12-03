@@ -8,6 +8,6 @@ type Result = string
 
 // Day - Interface for each day
 type Day interface {
-	part1(Input) (Result, error)
-	part2(Input) (Result, error)
+	Part1(Input) (Result, error)
+	Part2(Input) (Result, error)
 }

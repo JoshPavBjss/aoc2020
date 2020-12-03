@@ -1,7 +1,6 @@
-package main
+package days
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -9,9 +8,7 @@ import (
 )
 
 // Day2Computer computes the solutions for day 1
-type Day2Computer struct {
-	input shared.Input
-}
+type Day2Computer struct{}
 
 // PasswordPolicy policy stores the information used to validate a password
 type PasswordPolicy struct {
@@ -43,7 +40,7 @@ func validatePassword1(policy PasswordPolicy, pw string) bool {
 func validatePasswordPt2(policy PasswordPolicy, pw string) bool {
 	minIndexMatches := string(pw[policy.min-1]) == policy.letter
 	maxIndexMatches := string(pw[policy.max-1]) == policy.letter
-	return (minIndexMatches && !maxIndexMatches) || (!minIndexMatches && maxIndexMatches)
+	return minIndexMatches != maxIndexMatches
 }
 
 func validate(toValidate shared.Input, fn validator) string {
@@ -58,23 +55,12 @@ func validate(toValidate shared.Input, fn validator) string {
 	return strconv.Itoa(validPasswords)
 }
 
-func (d *Day2Computer) part1() (shared.Result, error) {
-	return validate(d.input, validatePassword1), nil
+// Part1 day2
+func (d *Day2Computer) Part1(input shared.Input) (shared.Result, error) {
+	return validate(input, validatePassword1), nil
 }
 
-func (d *Day2Computer) part2() (shared.Result, error) {
-	return validate(d.input, validatePasswordPt2), nil
-}
-
-func main() {
-
-	fmt.Println("AoC 2020 Day 01")
-
-	day2 := Day2Computer{shared.ReadStringLines(2)}
-
-	ans1, err1 := day2.part1()
-	fmt.Println("Question 1:", ans1, err1)
-
-	ans2, err2 := day2.part2()
-	fmt.Println("Question 2:", ans2, err2)
+// Part2 day2
+func (d *Day2Computer) Part2(input shared.Input) (shared.Result, error) {
+	return validate(input, validatePasswordPt2), nil
 }
