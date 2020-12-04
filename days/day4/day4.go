@@ -47,7 +47,7 @@ func loadAllPassports(input []string) []Passport {
 	return allPassport
 }
 
-// Part1 of day 3
+// Part1 of day 4
 func (d *Day4Computer) Part1(input shared.Input) (shared.Result, error) {
 
 	validPassports := 0
@@ -62,7 +62,7 @@ func (d *Day4Computer) Part1(input shared.Input) (shared.Result, error) {
 	return strconv.Itoa(validPassports), nil
 }
 
-// Part2 of day 3
+// Part2 of day 4
 func (d *Day4Computer) Part2(input shared.Input) (shared.Result, error) {
 	validPassports := 0
 

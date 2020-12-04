@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	today "../days/day4"
 	shared "../shared"
-	today "../solutions/day4"
 )
 
 func runForDay(day shared.Day, input shared.Input) {
