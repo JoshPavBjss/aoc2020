@@ -7,7 +7,7 @@ import (
 	"../../shared"
 )
 
-// Day2Computer computes the solutions for day 1
+// Day2Computer computes the solutions for day 2
 type Day2Computer struct{}
 
 // PasswordPolicy policy stores the information used to validate a password

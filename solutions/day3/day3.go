@@ -8,7 +8,7 @@ import (
 
 const tree = "#"
 
-// Day3Computer computes the solutions for day 1
+// Day3Computer computes the solutions for day 3
 type Day3Computer struct{}
 
 type slopeTraversePattern struct {

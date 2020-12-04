@@ -5,7 +5,7 @@ import (
 	"time"
 
 	shared "../shared"
-	today "../solutions/day3"
+	today "../solutions/day4"
 )
 
 func runForDay(day shared.Day, input shared.Input) {
@@ -24,9 +24,9 @@ func runForDay(day shared.Day, input shared.Input) {
 
 func main() {
 
-	day := 3
+	day := 4
 
 	fmt.Println("AoC 2020 Day", day)
 
-	runForDay(&today.Day3Computer{}, shared.Input(shared.ReadStringLines(3)))
+	runForDay(&today.Day4Computer{}, shared.Input(shared.ReadStringLines(day)))
 }
