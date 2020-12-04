@@ -2,8 +2,10 @@ package shared
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"strconv"
 )
 
@@ -57,4 +59,42 @@ func ToIntSlice(stringSlice []string) []int {
 		lines = append(lines, converted)
 	}
 	return lines
+}
+
+// ValidateInRange checks a string is between the two numbers
+func ValidateInRange(num string, start int, end int) bool {
+	parsed, err := strconv.Atoi(num)
+	return err == nil && start <= parsed && parsed <= end
+}
+
+// SetField sets a field in a interface by reflection
+func SetField(v interface{}, name string, value string) error {
+	// v must be a pointer to a struct
+	rv := reflect.ValueOf(v)
+	if rv.Kind() != reflect.Ptr || rv.Elem().Kind() != reflect.Struct {
+		return errors.New("v must be pointer to struct")
+	}
+
+	// Dereference pointer
+	rv = rv.Elem()
+
+	// Lookup field by name
+	fv := rv.FieldByName(name)
+	if !fv.IsValid() {
+		return fmt.Errorf("not a field name: %s", name)
+	}
+
+	// Field must be exported
+	if !fv.CanSet() {
+		return fmt.Errorf("cannot set field %s", name)
+	}
+
+	// We expect a string field
+	if fv.Kind() != reflect.String {
+		return fmt.Errorf("%s is not a string field", name)
+	}
+
+	// Set the value
+	fv.SetString(value)
+	return nil
 }
