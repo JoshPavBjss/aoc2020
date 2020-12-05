@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "/Users/josh.paveley/workspace/aoc/solutions/main.go",
+            "program": "/Users/josh.paveley/workspace/aoc/days/main.go",
             "env": {},
             "args": []
         }
