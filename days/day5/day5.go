@@ -4,6 +4,7 @@ import (
 	"errors"
 	"math"
 	"strconv"
+	"strings"
 
 	"../../shared"
 )
@@ -41,24 +42,21 @@ func (m SeatMap) idsPresent(ids []seatID) bool {
 	return true
 }
 
+func binaryStringToInt(s string, zero rune, one rune) int {
+	converted, _ := strconv.ParseInt(
+		strings.Replace(
+			strings.Replace(s, string(zero), "0", -1),
+			string(one), "1", -1),
+		2, 8)
+	return int(converted)
+}
+
 func calculateRowNumber(rowPartition string) int {
-	return binarySearch(rowPartition, 0, 127, "F", "B")
+	return binaryStringToInt(rowPartition, 'F', 'B')
 }
 
 func calculateColumnNumber(columnPartition string) int {
-	return binarySearch(columnPartition, 0, 7, "L", "R")
-}
-
-func binarySearch(input string, min int, max int, lower string, upper string) int {
-
-	for _, l := range input {
-		if string(l) == lower {
-			max = ((max + min) / 2)
-		} else if string(l) == upper {
-			min = ((max + min) / 2)
-		}
-	}
-	return max
+	return binaryStringToInt(columnPartition, 'L', 'R')
 }
 
 func buildSeatMap(input shared.Input) (SeatMap, max) {
