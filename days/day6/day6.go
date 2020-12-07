@@ -9,7 +9,31 @@ import (
 // Day6Computer solves day6
 type Day6Computer struct{}
 
-type set = map[rune]struct{}
+type set map[rune]struct{}
+
+func (s *set) isEmpty() bool {
+	return s == nil || len(*s) == 0
+}
+
+func (s *set) getIntersect(other set) set {
+	intersect := make(set)
+	for k := range *s {
+		if _, ok := other[k]; ok {
+			intersect[k] = struct{}{}
+		}
+	}
+	return intersect
+}
+
+func (s *set) uniqueAnswersCount() int {
+	return len(*s)
+}
+
+func addAnswersToSet(s *set, answerLine string) {
+	for _, char := range answerLine {
+		(*s)[char] = struct{}{}
+	}
+}
 
 // Part1 of day 6
 func (d *Day6Computer) Part1(input shared.Input) (shared.Result, error) {
@@ -21,15 +45,12 @@ func (d *Day6Computer) Part1(input shared.Input) (shared.Result, error) {
 	for i, line := range input {
 
 		if len(line) > 0 {
-			for _, char := range line {
-				answers[char] = struct{}{}
-			}
+			addAnswersToSet(&answers, line)
 		}
 
 		if len(line) == 0 || i == len(input)-1 {
-			uniqueAnswers += len(answers)
+			uniqueAnswers += answers.uniqueAnswersCount()
 			answers = make(set)
-			continue
 		}
 	}
 	return strconv.Itoa(uniqueAnswers), nil
@@ -42,28 +63,32 @@ func (d *Day6Computer) Part2(input shared.Input) (shared.Result, error) {
 
 	uniqueAnswers := 0
 
-	firstLine := true
+	populatedSet := false
 
 	for i, line := range input {
-		newAnswers := make(set)
 
 		if len(line) > 0 {
-			for _, char := range line {
-				if firstLine {
-					newAnswers[char] = struct{}{}
-				} else if _, ok := answers[char]; ok {
-					newAnswers[char] = struct{}{}
-				}
+
+			if populatedSet && answers.isEmpty() {
+				// If there are no intersections on previous questions then there is no need to check any more
+				continue
 			}
-			answers = newAnswers
-			firstLine = false
+
+			newAnswers := make(set)
+			addAnswersToSet(&newAnswers, line)
+
+			if !populatedSet {
+				answers = newAnswers
+				populatedSet = true
+			} else {
+				answers = answers.getIntersect(newAnswers)
+			}
 		}
 
 		if len(line) == 0 || i == len(input)-1 {
-			uniqueAnswers += len(answers)
-			answers = make(map[rune]struct{})
-			firstLine = true
-			continue
+			uniqueAnswers += answers.uniqueAnswersCount()
+			answers = make(set)
+			populatedSet = false
 		}
 	}
 	return strconv.Itoa(uniqueAnswers), nil
