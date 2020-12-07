@@ -8,71 +8,61 @@ import (
 	"../../shared"
 )
 
+const shinyGold = bagColour("shiny gold")
+
 // Day7Computer solves day7
 type Day7Computer struct{}
 
+type bagColour = string
+
 type bagContent struct {
 	amount int
-	colour string
+	colour bagColour
 }
 
-func getAmountAndColour(bag string) (int, string) {
-	if bag == "no other bags." {
-		return 0, ""
-	}
+type bagRules = map[bagColour][]bagContent
+
+func createBagContent(bag string) bagContent {
 	matches := regexp.MustCompile(`([0-9]{1,})\s([a-z].*?)\sbag`).FindAllStringSubmatch(bag, -1)
 	amount, _ := strconv.Atoi(matches[0][1])
-	return amount, matches[0][2]
+	return bagContent{amount, matches[0][2]}
 }
 
-func buildBagMap(input shared.Input) map[string][]bagContent {
-	bags := make(map[string][]bagContent)
+func createBagRules(input shared.Input) bagRules {
+	bags := make(bagRules)
 
 	for _, line := range input {
 
 		bagContents := make([]bagContent, 0)
 
-		keyValueSplit := strings.Split(line, "contain")
+		bagColourAndContents := strings.Split(line, "contain")
 
-		key := strings.TrimSpace(strings.ReplaceAll(keyValueSplit[0], "bags", ""))
+		colour := strings.TrimSpace(strings.ReplaceAll(bagColourAndContents[0], " bags", ""))
 
-		values := strings.Split(keyValueSplit[1], ",")
-
-		if strings.TrimSpace(keyValueSplit[1]) == "no other bags." {
-			bagContents = nil
-		} else {
-			for _, subbag := range values {
-				amount, colour := getAmountAndColour(strings.TrimSpace(subbag))
-				bagContents = append(bagContents, bagContent{amount, colour})
+		if strings.TrimSpace(bagColourAndContents[1]) != "no other bags." {
+			for _, bagWithin := range strings.Split(bagColourAndContents[1], ",") {
+				bagContents = append(bagContents, createBagContent(strings.TrimSpace(bagWithin)))
 			}
 		}
 
-		bags[key] = bagContents
+		bags[colour] = bagContents
 
 	}
 	return bags
 }
 
-func containsShinyGold(bags map[string][]bagContent, currentBag string) bool {
-	bagContents := bags[currentBag]
-	if bagContents == nil {
-		return false
-	}
-	for _, bag := range bagContents {
-		if bag.colour == "shiny gold" || containsShinyGold(bags, bag.colour) {
+func bagContainsBag(bags bagRules, currentBag bagColour, soughtBagColour bagColour) bool {
+	for _, bag := range bags[currentBag] {
+		if bag.colour == soughtBagColour || bagContainsBag(bags, bag.colour, soughtBagColour) {
 			return true
 		}
 	}
 	return false
 }
 
-func calcBagsContained(bags map[string][]bagContent, currentBag string) int {
-	bagContents := bags[currentBag]
-	if bagContents == nil {
-		return 0
-	}
+func calcBagsContained(bags bagRules, currentBag string) int {
 	bagCount := 0
-	for _, bag := range bagContents {
+	for _, bag := range bags[currentBag] {
 		bagCount += bag.amount * (1 + calcBagsContained(bags, bag.colour))
 	}
 	return bagCount
@@ -81,23 +71,20 @@ func calcBagsContained(bags map[string][]bagContent, currentBag string) int {
 // Part1 of day 7
 func (d *Day7Computer) Part1(input shared.Input) (shared.Result, error) {
 
-	bags := buildBagMap(input)
+	bags := createBagRules(input)
 
-	shinyGold := 0
+	shinyGoldCount := 0
 
 	for k := range bags {
-		if containsShinyGold(bags, k) {
-			shinyGold++
+		if bagContainsBag(bags, k, shinyGold) {
+			shinyGoldCount++
 		}
 	}
 
-	return strconv.Itoa(shinyGold), nil
+	return strconv.Itoa(shinyGoldCount), nil
 }
 
 // Part2 of day 7
 func (d *Day7Computer) Part2(input shared.Input) (shared.Result, error) {
-
-	bags := buildBagMap(input)
-
-	return strconv.Itoa(calcBagsContained(bags, "shiny gold")), nil
+	return strconv.Itoa(calcBagsContained(createBagRules(input), shinyGold)), nil
 }
