@@ -98,3 +98,10 @@ func SetField(v interface{}, name string, value string) error {
 	fv.SetString(value)
 	return nil
 }
+
+// CreateCopy creates a copy of the slice
+func CreateCopy(slice []string) []string {
+	sliceCopy := make([]string, len(slice))
+	copy(sliceCopy, slice)
+	return sliceCopy
+}
