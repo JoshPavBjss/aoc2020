@@ -62,9 +62,9 @@ func (d *Day8Computer) Part1(input shared.Input) (shared.Result, error) {
 
 	instructions := buildInstructionMap(input)
 
-	fmt.Println(getValueAtLoopStart(instructions))
+	val, _ := getValueAtLoopStart(instructions)
 
-	return "", errors.New("Not yet implemented")
+	return strconv.Itoa(val), nil
 }
 
 func createInstructionMapCopy(instructions instructionMap) instructionMap {
@@ -97,7 +97,7 @@ func (d *Day8Computer) Part2(input shared.Input) (shared.Result, error) {
 
 			if err != nil {
 				fmt.Println("This one worked, acc was:", val)
-				break
+				return strconv.Itoa(val), nil
 			}
 		}
 	}
