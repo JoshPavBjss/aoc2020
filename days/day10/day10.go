@@ -13,15 +13,24 @@ type Day10Computer struct{}
 const minAdapterDiff = 1
 const maxAdapterDiff = 3
 
-// Part1 of day 10
-func (d *Day10Computer) Part1(input shared.Input) (shared.Result, error) {
+func createJoltageAdapterSlice(puzzleInput shared.Input) []int {
 
-	joltages := shared.ToIntSlice(input)
+	joltages := shared.ToIntSlice(puzzleInput)
 
 	sort.Ints(joltages)
 
-	joltages = append([]int{0}, joltages...)
-	joltages = append(joltages, joltages[len(joltages)-1]+3)
+	joltages = append([]int{0}, joltages...) // Add charging outlet joltage
+
+	maxDeviceJoltage := joltages[len(joltages)-1]
+	joltages = append(joltages, maxDeviceJoltage+maxAdapterDiff) // Add my devices joltage
+
+	return joltages
+}
+
+// Part1 of day 10
+func (d *Day10Computer) Part1(input shared.Input) (shared.Result, error) {
+
+	joltages := createJoltageAdapterSlice(input)
 
 	joltageDifferences := []int{0, 0, 0}
 
@@ -36,18 +45,13 @@ func (d *Day10Computer) Part1(input shared.Input) (shared.Result, error) {
 // Part2 of day 10
 func (d *Day10Computer) Part2(input shared.Input) (shared.Result, error) {
 
-	joltages := shared.ToIntSlice(input)
-
-	sort.Ints(joltages)
-
-	joltages = append([]int{0}, joltages...)
-	joltages = append(joltages, joltages[len(joltages)-1]+3)
+	joltages := createJoltageAdapterSlice(input)
 
 	joltagePathCombinations := make([]int, len(joltages))
 	joltagePathCombinations[0]++
 
 	for i := 1; i < len(joltages); i++ {
-		for index := i - 1; index >= 0 && index >= i-3; index-- {
+		for index := i - 1; index >= 0; index-- {
 			diff := joltages[i] - joltages[index]
 			if diff > maxAdapterDiff {
 				break
