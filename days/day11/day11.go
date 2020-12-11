@@ -62,6 +62,54 @@ func adjacentSeatsOccupiedCount(seatLayout [][]rune, row, col int) int {
 	return count
 }
 
+type direction struct {
+	x int
+	y int
+}
+
+func getAllDirections() []direction {
+	return []direction{
+		direction{0, -1},  // North
+		direction{1, -1},  // North east
+		direction{1, 0},   // east
+		direction{1, 1},   // south east
+		direction{0, 1},   // south
+		direction{-1, 1},  // south west
+		direction{-1, 0},  // west
+		direction{-1, -1}, // north west
+	}
+}
+
+func outOfBounds(seatMap [][]rune, row, col int) bool {
+	return row < 0 || row >= len(seatMap) || col < 0 || col >= len(seatMap[0])
+}
+
+func getFirstSeatInEachDirection(seatLayout [][]rune, row, col int) []rune {
+
+	seats := make([]rune, 0)
+
+	for _, dir := range getAllDirections() {
+		currentRow := row
+		currentCol := col
+
+	seatLoop:
+		for {
+			currentRow += dir.y
+			currentCol += dir.x
+
+			if outOfBounds(seatLayout, currentRow, currentCol) {
+				break seatLoop
+			} else if seat := seatLayout[currentRow][currentCol]; seat != floor {
+				// fmt.Println("(", currentRow, ",", currentCol, ")", string(seat))
+				seats = append(seats, seat)
+				break seatLoop
+			}
+
+		}
+	}
+	return seats
+}
+
 func createSeatLayout(input shared.Input) [][]rune {
 
 	seatLayout := make([][]rune, len(input))
@@ -147,8 +195,59 @@ func (d *Day11Computer) Part1(input shared.Input) (shared.Result, error) {
 	return strconv.Itoa(getOccupiedCount(seatLayout)), nil
 }
 
+func getUpdatedLayoutPt2(seatLayout [][]rune) [][]rune {
+
+	newSeatLayout := make([][]rune, len(seatLayout))
+
+	for rowIt, row := range seatLayout {
+		newSeatLayout[rowIt] = make([]rune, len(row))
+		for colIt := range row {
+			newSeat := getNewSeatStatePt2(seatLayout, rowIt, colIt)
+			newSeatLayout[rowIt][colIt] = newSeat
+		}
+	}
+
+	return newSeatLayout
+
+}
+
+func getNewSeatStatePt2(seatLayout [][]rune, row, col int) rune {
+
+	currentSeat := (seatLayout)[row][col]
+
+	firstSeatsInDirections := getFirstSeatInEachDirection(seatLayout, row, col)
+
+	occupiedCount := 0
+
+	for _, seat := range firstSeatsInDirections {
+		if seat == occupiedSeat {
+			occupiedCount++
+		}
+	}
+
+	if currentSeat == emptySeat && occupiedCount == 0 {
+		return occupiedSeat
+	} else if currentSeat == occupiedSeat && occupiedCount >= 5 {
+		return emptySeat
+	}
+	return currentSeat
+}
+
 // Part2 of day 10
 func (d *Day11Computer) Part2(input shared.Input) (shared.Result, error) {
 
-	return "", nil
+	seatLayout := createSeatLayout(input)
+
+	for {
+		newSeatLayout := getUpdatedLayoutPt2(seatLayout)
+
+		if seatLayoutsEqual(seatLayout, newSeatLayout) {
+			break
+		}
+
+		// Reset
+		seatLayout = newSeatLayout
+	}
+
+	return strconv.Itoa(getOccupiedCount(seatLayout)), nil
 }
