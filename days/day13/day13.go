@@ -31,6 +31,33 @@ func busDepartsAtTime(busNo, currentTime int) bool {
 	return currentTime%busNo == 0
 }
 
+func getEarliestBusDepart(busTimes []busSchedule, start, increment int) int {
+
+	timeStamp := start
+
+	for true {
+		for i, bus := range busTimes {
+			if (timeStamp+bus.offset)%bus.busNo != 0 {
+				break
+			}
+			if i == len(busTimes)-1 {
+				return timeStamp
+			}
+		}
+		timeStamp += increment
+	}
+	return -1
+}
+
+// Increment is the product of all bus numbers bar the last
+func getIncrement(buses []busSchedule) int {
+	increment := 1
+	for _, bus := range buses[0 : len(buses)-1] {
+		increment *= bus.busNo
+	}
+	return increment
+}
+
 // Part1 of day 10
 func (d *Day13Computer) Part1(input shared.Input) (shared.Result, error) {
 
@@ -53,52 +80,19 @@ func (d *Day13Computer) Part1(input shared.Input) (shared.Result, error) {
 	return "", errors.New("Could not find available bus")
 }
 
-func earliestBusDepart(busTimes []busSchedule, start, increment int) int {
-
-	timeStamp := start
-
-	for true {
-	busLoop:
-		for i, bus := range busTimes {
-			if (timeStamp+bus.offset)%bus.busNo != 0 {
-				break busLoop
-			}
-			if i == len(busTimes)-1 {
-				return timeStamp
-			}
-		}
-		timeStamp += increment
-	}
-	return -1
-}
-
-func getIncrement(buses []busSchedule) int {
-	increment := 1
-	for _, bus := range buses {
-		increment *= bus.busNo
-	}
-	return increment
-}
-
 // Part2 of day 10
 func (d *Day13Computer) Part2(input shared.Input) (shared.Result, error) {
 
-	buses := strings.Split(input[1], ",")
+	busSchedule := createBusSchedule(input)
 
-	busSchedules := make([]busSchedule, 0)
+	timestamp := busSchedule[0].busNo
 
-	for i, bus := range buses {
-		if busNo, err := strconv.Atoi(bus); err == nil {
-			busSchedules = append(busSchedules, busSchedule{busNo: busNo, offset: i})
-		}
+	for i := range busSchedule {
+
+		busSubset := busSchedule[0 : i+1]
+
+		timestamp = getEarliestBusDepart(busSubset, timestamp, getIncrement(busSubset))
 	}
 
-	startTime := busSchedules[0].busNo
-
-	for i := range busSchedules {
-
-		startTime = earliestBusDepart(busSchedules[0:i+1], startTime, getIncrement(busSchedules[0:i]))
-	}
-
-	return strconv.Itoa(startTime), nil
+	return strconv.Itoa(timestamp), nil
 }
