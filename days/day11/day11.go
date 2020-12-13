@@ -100,7 +100,6 @@ func getFirstSeatInEachDirection(seatLayout [][]rune, row, col int) []rune {
 			if outOfBounds(seatLayout, currentRow, currentCol) {
 				break seatLoop
 			} else if seat := seatLayout[currentRow][currentCol]; seat != floor {
-				// fmt.Println("(", currentRow, ",", currentCol, ")", string(seat))
 				seats = append(seats, seat)
 				break seatLoop
 			}
