@@ -13,7 +13,7 @@ type Day14Computer struct{}
 
 type bitmask = [36]int
 
-var possibleFloatingBitValues = []rune{'0', '1'}
+var possibleFloatingBitValues = [...]rune{'0', '1'}
 
 func withLeadingZeros(num string) string {
 	result := num
