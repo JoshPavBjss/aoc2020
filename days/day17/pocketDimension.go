@@ -5,25 +5,28 @@ import "fmt"
 const active = '#'
 const inactive = '.'
 
-// The amount extra in each dimension to compute at a time
+// For better visualization when printing
 const offset = 1
 
 // PocketDimension -
 type PocketDimension struct {
-	dimension       [][][]rune
+	dimension       [][][][]rune
 	cyclesProcessed int
 }
 
 // NewPocketDimension -
-func NewPocketDimension(xLen, yLen, zLen int) PocketDimension {
+func NewPocketDimension(xLen, yLen, zLen, wLen int) PocketDimension {
 
-	dimension := make([][][]rune, xLen+offset*2)
-	for i := range dimension {
-		dimension[i] = make([][]rune, yLen+offset*2)
-		for j := range dimension[i] {
-			dimension[i][j] = make([]rune, zLen+offset*2)
-			for k := range dimension[i][j] {
-				dimension[i][j][k] = inactive
+	dimension := make([][][][]rune, xLen+offset*2)
+	for x := range dimension {
+		dimension[x] = make([][][]rune, yLen+offset*2)
+		for y := range dimension[x] {
+			dimension[x][y] = make([][]rune, zLen+offset*2)
+			for z := range dimension[x][y] {
+				dimension[x][y][z] = make([]rune, wLen+offset*2)
+				for w := range dimension[x][y][z] {
+					dimension[x][y][z][w] = inactive
+				}
 			}
 		}
 	}
@@ -32,13 +35,13 @@ func NewPocketDimension(xLen, yLen, zLen int) PocketDimension {
 }
 
 func getOffsetCoordinate(coord Coordinate) Coordinate {
-	return Coordinate{x: coord.x + offset, y: coord.y + offset, z: coord.z + offset}
+	return Coordinate{x: coord.x + offset, y: coord.y + offset, z: coord.z + offset, w: coord.w + offset}
 }
 
 // Set - sets the state at a given position
 func (pd *PocketDimension) Set(coord Coordinate, state rune) {
 	offsetCoordinate := getOffsetCoordinate(coord)
-	pd.dimension[offsetCoordinate.x][offsetCoordinate.y][offsetCoordinate.z] = state
+	pd.dimension[offsetCoordinate.x][offsetCoordinate.y][offsetCoordinate.z][offsetCoordinate.w] = state
 }
 
 func (pd *PocketDimension) inXDimension(x int) bool {
@@ -53,15 +56,19 @@ func (pd *PocketDimension) inZDimension(z int) bool {
 	return 0 <= z && z < len(pd.dimension[0][0])
 }
 
+func (pd *PocketDimension) inWDimension(w int) bool {
+	return 0 <= w && w < len(pd.dimension[0][0][0])
+}
+
 func (pd *PocketDimension) existsInDimension(coord Coordinate) bool {
-	return pd.inXDimension(coord.x) && pd.inYDimension(coord.y) && pd.inZDimension(coord.z)
+	return pd.inXDimension(coord.x) && pd.inYDimension(coord.y) && pd.inZDimension(coord.z) && pd.inWDimension(coord.w)
 }
 
 // GetCurrentState -
 func (pd *PocketDimension) GetCurrentState(coord Coordinate) rune {
 
 	if pd.existsInDimension(coord) {
-		return pd.dimension[coord.x][coord.y][coord.z]
+		return pd.dimension[coord.x][coord.y][coord.z][coord.w]
 	}
 	return inactive
 }
@@ -108,15 +115,18 @@ func (pd *PocketDimension) ProcessCycle() {
 	xDimensionSize := len(pd.dimension)
 	yDimensionSize := len(pd.dimension[0])
 	zDimensionSize := len(pd.dimension[0][0])
+	wDimensionSize := len(pd.dimension[0][0][0])
 
 	// Create expanded PocketDimension
-	newDimension := NewPocketDimension(xDimensionSize, yDimensionSize, zDimensionSize)
+	newDimension := NewPocketDimension(xDimensionSize, yDimensionSize, zDimensionSize, wDimensionSize)
 
 	for x := 0; x < xDimensionSize; x++ {
 		for y := 0; y < yDimensionSize; y++ {
 			for z := 0; z < zDimensionSize; z++ {
-				coord := Coordinate{x, y, z}
-				newDimension.Set(coord, pd.GetNewState(coord))
+				for w := 0; w < wDimensionSize; w++ {
+					coord := Coordinate{x, y, z, w}
+					newDimension.Set(coord, pd.GetNewState(coord))
+				}
 			}
 		}
 	}
@@ -138,7 +148,9 @@ func (pd *PocketDimension) getAllCubeCoordinates() []Coordinate {
 	for x := 1; x < len(pd.dimension)-1; x++ {
 		for y := 1; y < len(pd.dimension[0])-1; y++ {
 			for z := 1; z < len(pd.dimension[0][0])-1; z++ {
-				allCubeCoordinates = append(allCubeCoordinates, Coordinate{x, y, z})
+				for w := 1; w < len(pd.dimension[0][0][0])-1; w++ {
+					allCubeCoordinates = append(allCubeCoordinates, Coordinate{x, y, z, w})
+				}
 			}
 		}
 	}

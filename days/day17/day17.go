@@ -24,12 +24,13 @@ func (d *Day17Computer) Part1(input shared.Input) (shared.Result, error) {
 func createPocketDimensionFromInitialState(initialState shared.Input) PocketDimension {
 
 	z := 0
+	w := 0
 
-	dimension := NewPocketDimension(len(initialState[0]), len(initialState), 1)
+	dimension := NewPocketDimension(len(initialState[0]), len(initialState), 1, 1)
 
 	for y, line := range initialState {
 		for x, state := range line {
-			dimension.Set(Coordinate{x, y, z}, state)
+			dimension.Set(Coordinate{x, y, z, w}, state)
 		}
 	}
 
