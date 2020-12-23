@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Node -
 type Node struct {
 	prev int
 	next int
