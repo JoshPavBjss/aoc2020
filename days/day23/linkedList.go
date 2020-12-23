@@ -5,129 +5,81 @@ import (
 	"strings"
 )
 
-// Node -
 type Node struct {
-	value int
-	next  *Node
+	prev int
+	next int
 }
 
 // LinkedList -
 type LinkedList struct {
-	head *Node
+	list map[int]*Node
+	head *int
+}
+
+// NewLinkedList -
+func NewLinkedList() LinkedList {
+	return LinkedList{list: make(map[int]*Node)}
 }
 
 // Add -
 func (ll *LinkedList) Add(toAdd int) {
 	if ll.head == nil {
-		head := &Node{value: toAdd}
-		ll.head = head
-		ll.head.next = head
+		ll.head = &toAdd
+		ll.list[toAdd] = &Node{toAdd, toAdd}
 	} else {
 
-		currentNode := ll.head
-		for currentNode.next != ll.head {
-			currentNode = currentNode.next
-		}
-		newNode := Node{value: toAdd, next: ll.head}
-		currentNode.next = &newNode
+		lastInList := ll.list[*ll.head].prev
+
+		ll.list[*ll.head].prev = toAdd
+
+		ll.list[lastInList].next = toAdd
+		ll.list[toAdd] = &Node{lastInList, *ll.head}
+
 	}
 }
 
-// AddAllAfter - Add's a int to the list after the given int, if the number is not found, does not insert
-func (ll *LinkedList) AddAllAfter(toAdd []int, after int) bool {
+// UpdateOrder -
+func (ll *LinkedList) UpdateOrder(toMove, destination, amountToMove int) {
 
-	currentNode := ll.head
+	endOfChain := toMove
 
-	isFirst := true
-
-	for currentNode != ll.head || isFirst {
-
-		if currentNode.value == after {
-			temp := currentNode.next
-
-			for _, val := range toAdd {
-				currentNode.next = &Node{value: val}
-				currentNode = currentNode.next
-			}
-
-			currentNode.next = temp
-			return true
-		}
-
-		currentNode = currentNode.next
-		isFirst = false
+	for i := 1; i < amountToMove; i++ {
+		endOfChain = ll.list[endOfChain].next
 	}
-	return false
+
+	// Set previous next to end of chain next
+	ll.list[ll.list[toMove].prev].next = ll.list[endOfChain].next
+
+	// Set end of chain previous to previous
+	ll.list[ll.list[endOfChain].next].prev = ll.list[toMove].prev
+
+	// Set end of chain next to destination next
+	ll.list[endOfChain].next = ll.list[destination].next
+
+	ll.list[ll.list[destination].next].prev = endOfChain
+
+	// Set destination next to toMove
+	ll.list[destination].next = toMove
+
+	ll.list[toMove].prev = destination
+
 }
 
-// AddAfter - Add's a int to the list after the given int, if the number is not found, does not insert
-func (ll *LinkedList) AddAfter(toAdd, after int) bool {
+// GetNextN -
+func (ll *LinkedList) GetNextN(current, n int) []int {
 
-	currentNode := ll.head
-	isFirst := true
-	for currentNode != ll.head || isFirst {
+	nextN := make([]int, 0)
 
-		if currentNode.value == after {
-			temp := Node{value: toAdd, next: currentNode.next}
-			currentNode.next = &temp
-			return true
-		}
+	currentNode := current
 
-		currentNode = currentNode.next
-		isFirst = false
+	for i := 0; i < n; i++ {
+		next := ll.list[currentNode].next
+		nextN = append(nextN, next)
+		currentNode = next
 	}
-	return false
-}
 
-// RemoveNextN -
-func (ll *LinkedList) RemoveNextN(prev, n int) []*Node {
+	return nextN
 
-	toReturn := make([]*Node, 0)
-
-	isFirst := true
-
-	currentNode := ll.head
-	for currentNode != ll.head || isFirst {
-
-		if currentNode.value == prev {
-
-			temp := currentNode
-
-			for i := 0; i < n; i++ {
-				currentNode = currentNode.next
-				if currentNode == nil {
-					return toReturn
-				}
-				if currentNode == ll.head {
-					ll.head = temp
-				}
-				toReturn = append(toReturn, currentNode)
-			}
-
-			temp.next = currentNode.next
-			return toReturn
-		}
-		currentNode = currentNode.next
-		isFirst = false
-	}
-	return nil
-}
-
-// Remove -
-func (ll *LinkedList) Remove(toRemove int) *Node {
-
-	currentNode := ll.head
-	for currentNode.next != nil {
-
-		if currentNode.next.value == toRemove {
-			temp := currentNode.next
-			currentNode.next = currentNode.next.next
-			return temp
-		}
-		currentNode = currentNode.next
-
-	}
-	return nil
 }
 
 // ToString -
@@ -135,16 +87,23 @@ func (ll *LinkedList) ToString(currentVal int) string {
 	var result strings.Builder
 	isFirst := true
 	currentNode := ll.head
-	for currentNode != ll.head || isFirst {
-		if currentVal == currentNode.value {
-			result.WriteString(fmt.Sprintf("(%v)", currentNode.value))
+
+	for *currentNode != *ll.head || isFirst {
+		nodeValue := *currentNode
+
+		if currentVal == nodeValue {
+			result.WriteString(fmt.Sprintf("(%v)", nodeValue))
 		} else {
-			result.WriteString(fmt.Sprintf("%v", currentNode.value))
+			result.WriteString(fmt.Sprintf("%v", nodeValue))
 		}
-		if currentNode.next != ll.head || isFirst {
+
+		nextNode := &ll.list[nodeValue].next
+
+		if *nextNode != *ll.head || isFirst {
 			result.WriteString(" -> ")
 		}
-		currentNode = currentNode.next
+
+		currentNode = nextNode
 		isFirst = false
 	}
 	return result.String()

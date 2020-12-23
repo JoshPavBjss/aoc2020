@@ -11,8 +11,17 @@ import (
 
 const debug = false
 
+// CrabCups -
+type CrabCups struct {
+	gameState   LinkedList
+	currentCup  *int
+	currentMove int
+	lowestCup   int
+	highestCup  int
+}
+
 func createCrapCupsGameFromInput(input shared.Input) CrabCups {
-	cupList := LinkedList{}
+	cupList := NewLinkedList()
 
 	min := math.MaxInt16
 	max := math.MinInt16
@@ -52,34 +61,19 @@ func createCrapCupsGamePt2FromInput(input shared.Input) CrabCups {
 	return CrabCups{gameState: cupList, currentCup: cupList.head, currentMove: 1, lowestCup: min, highestCup: max}
 }
 
-// CrabCups -
-type CrabCups struct {
-	gameState   LinkedList
-	currentCup  *Node
-	currentMove int
-	lowestCup   int
-	highestCup  int
-}
-
 func (cc *CrabCups) pickUpNCups(n int) []int {
 
-	pickedUpCups := cc.gameState.RemoveNextN((*cc.currentCup).value, 3)
+	pickedUpCups := cc.gameState.GetNextN(*cc.currentCup, 3)
 
 	if debug {
 		fmt.Print("pick up: ")
 		for _, cup := range pickedUpCups {
-			fmt.Print(cup.value, " ")
+			fmt.Print(cup, " ")
 		}
 		fmt.Print("\n")
 	}
 
-	cupValues := make([]int, 0)
-
-	for _, cup := range pickedUpCups {
-		cupValues = append(cupValues, cup.value)
-	}
-
-	return cupValues
+	return pickedUpCups
 }
 
 // PlayMove -
@@ -96,22 +90,22 @@ func (cc *CrabCups) PlayMove() {
 	// Select destination cup
 	destinationCup := cc.getDestinationCup(pickedUpCups)
 
-	// Add all picked up cups after the destintation cup
-	cc.gameState.AddAllAfter(pickedUpCups, destinationCup)
-
-	// Select new cup clockwise of current cup
-	cc.currentCup = cc.currentCup.next
-
 	if debug {
 		fmt.Print("destination:", destinationCup, "\n\n")
 	}
+
+	// Add all picked up cups after the destintation cup
+	cc.gameState.UpdateOrder(pickedUpCups[0], destinationCup, 3)
+
+	// Select new cup clockwise of current cup
+	cc.currentCup = &cc.gameState.GetNextN(*cc.currentCup, 1)[0]
 
 	cc.currentMove++
 }
 
 func (cc *CrabCups) getDestinationCup(pickedUpCups []int) int {
 
-	destinationCup := checkWrapAround((*cc.currentCup).value-1, cc.lowestCup, cc.highestCup)
+	destinationCup := checkWrapAround((*cc.currentCup)-1, cc.lowestCup, cc.highestCup)
 
 	for valueInList(destinationCup, pickedUpCups) {
 		destinationCup--
@@ -142,7 +136,6 @@ func valueInList(value int, list []int) bool {
 func (cc *CrabCups) PlayNMoves(n int) {
 	for i := 0; i < n; i++ {
 		cc.PlayMove()
-		fmt.Println("Round: ", cc.currentMove)
 	}
 	if debug {
 		fmt.Println("-- final --")
@@ -156,21 +149,21 @@ func (cc *CrabCups) GetLabelsAfterCup(cupNumber int) string {
 	var result strings.Builder
 	first := true
 	currentCup := cc.gameState.head
-	for (*currentCup).value != cupNumber || first {
+	for (*currentCup) != cupNumber || first {
 
 		if !first {
-			result.WriteString(fmt.Sprintf("%v", (*currentCup).value))
+			result.WriteString(fmt.Sprintf("%v", (*currentCup)))
 		}
 
-		if (*currentCup).value == cupNumber {
+		if (*currentCup) == cupNumber {
 			first = false
 		}
-		currentCup = currentCup.next
+		currentCup = &cc.gameState.GetNextN(*currentCup, 1)[0]
 	}
 	return result.String()
 }
 
 // PrintState -
 func (cc *CrabCups) PrintState() {
-	fmt.Println("cups:", cc.gameState.ToString((*cc.currentCup).value))
+	fmt.Println("cups:", cc.gameState.ToString((*cc.currentCup)))
 }

@@ -20,9 +20,9 @@ func (d *Day23Computer) Part1(input shared.Input) (shared.Result, error) {
 // Part2 of day 23
 func (d *Day23Computer) Part2(input shared.Input) (shared.Result, error) {
 
-	crabCups := createCrapCupsGamePt2FromInput(input)
+	// crabCups := createCrapCupsGamePt2FromInput(input)
 
-	crabCups.PlayNMoves(1000000)
+	// crabCups.PlayNMoves(1000000)
 
 	return "", nil
 }
