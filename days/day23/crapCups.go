@@ -39,7 +39,7 @@ func createCrapCupsGameFromInput(input shared.Input) CrabCups {
 }
 
 func createCrapCupsGamePt2FromInput(input shared.Input) CrabCups {
-	cupList := LinkedList{}
+	cupList := NewLinkedList()
 
 	min := math.MaxInt16
 	max := math.MinInt16
@@ -55,10 +55,9 @@ func createCrapCupsGamePt2FromInput(input shared.Input) CrabCups {
 
 	for i := max + 1; i <= 1000000; i++ {
 		cupList.Add(i)
-		fmt.Println(i)
 	}
 
-	return CrabCups{gameState: cupList, currentCup: cupList.head, currentMove: 1, lowestCup: min, highestCup: max}
+	return CrabCups{gameState: cupList, currentCup: cupList.head, currentMove: 1, lowestCup: min, highestCup: 1000000}
 }
 
 func (cc *CrabCups) pickUpNCups(n int) []int {
@@ -141,6 +140,11 @@ func (cc *CrabCups) PlayNMoves(n int) {
 		fmt.Println("-- final --")
 		cc.PrintState()
 	}
+}
+
+// GetCupsHidingStars -
+func (cc *CrabCups) GetCupsHidingStars() []int {
+	return cc.gameState.GetNextN(1, 2)
 }
 
 // GetLabelsAfterCup -
