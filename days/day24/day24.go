@@ -66,9 +66,7 @@ func getCoordsFromDirections(directions []string) coord {
 
 }
 
-func identifyTile(directions []string, floorMap *map[coord]bool) {
-
-	tilePos := getCoordsFromDirections(directions)
+func identifyTile(tilePos coord, floorMap *map[coord]bool) {
 
 	if tileFlipped, tileSet := (*floorMap)[tilePos]; tileSet {
 		(*floorMap)[tilePos] = !tileFlipped
@@ -77,15 +75,25 @@ func identifyTile(directions []string, floorMap *map[coord]bool) {
 	}
 }
 
-// Part1 of day 24
-func (d *Day24Computer) Part1(input shared.Input) (shared.Result, error) {
-
+func createFloorMap(input shared.Input) (map[coord]bool, map[coord]struct{}) {
 	floorMap := make(map[coord]bool)
 
+	allAdjacentTiles := make(map[coord]struct{})
+
 	for _, line := range input {
-		identifyTile(getDirections(line), &floorMap)
+		tilePos := getCoordsFromDirections(getDirections(line))
+
+		identifyTile(tilePos, &floorMap)
+
+		for _, adjacent := range getAdjacentTiles(tilePos) {
+			allAdjacentTiles[adjacent] = struct{}{}
+		}
 	}
 
+	return floorMap, allAdjacentTiles
+}
+
+func getBlackTiles(floorMap map[coord]bool) int {
 	count := 0
 
 	for _, v := range floorMap {
@@ -94,11 +102,105 @@ func (d *Day24Computer) Part1(input shared.Input) (shared.Result, error) {
 		}
 	}
 
-	return fmt.Sprintf("%v", count), nil
+	return count
+}
+
+func getAdjacentTiles(tile coord) []coord {
+
+	adjacentTiles := make([]coord, 0)
+
+	adjacentTiles = append(adjacentTiles, coord{tile.x + 1, tile.y + 1}) // ne
+	adjacentTiles = append(adjacentTiles, coord{tile.x + 2, tile.y})     // e
+	adjacentTiles = append(adjacentTiles, coord{tile.x + 1, tile.y - 1}) // se
+	adjacentTiles = append(adjacentTiles, coord{tile.x - 1, tile.y - 1}) // sw
+	adjacentTiles = append(adjacentTiles, coord{tile.x - 2, tile.y})     // w
+	adjacentTiles = append(adjacentTiles, coord{tile.x - 1, tile.y + 1}) // nw
+
+	// for x := -2; x <= 2; x++ {
+	// 	for y := -1; y <= 1; y++ {
+
+	// 		if !(x == 0 && y == 0) && (math.Abs(float64(x+y%2)) == 0) {
+
+	// 			adjacentTiles = append(adjacentTiles, coord{tile.x + x, tile.y + y})
+	// 		}
+	// 	}
+	// }
+
+	return adjacentTiles
+}
+
+func getAdjacentTileColours(adjacentTiles []coord, tileMap map[coord]bool) (int, int) {
+
+	blackTiles := 0
+	whiteTiles := 0
+
+	for _, adjacentTile := range adjacentTiles {
+
+		if tileFlipped, tileSet := tileMap[adjacentTile]; tileSet {
+
+			if tileFlipped {
+				blackTiles++
+			} else {
+				whiteTiles++
+			}
+
+		}
+
+	}
+	return blackTiles, whiteTiles
+}
+
+func processDay(floorMap map[coord]bool, allToCheck map[coord]struct{}) (map[coord]bool, map[coord]struct{}) {
+
+	endOfDayFloorMap := make(map[coord]bool)
+	allAdjacentTiles := allToCheck
+
+	for tile := range allToCheck {
+
+		adjacentTiles := getAdjacentTiles(tile)
+
+		adjacentBlack, _ := getAdjacentTileColours(adjacentTiles, floorMap)
+
+		tileFlipped, tileSet := floorMap[tile]
+
+		if tileSet && tileFlipped {
+			// Flipped means black
+			endOfDayFloorMap[tile] = !(adjacentBlack == 0 || adjacentBlack > 2)
+		} else {
+			shouldFlip := (adjacentBlack == 2)
+			if shouldFlip {
+				for _, adjacent := range getAdjacentTiles(tile) {
+					allAdjacentTiles[adjacent] = struct{}{}
+				}
+			}
+			endOfDayFloorMap[tile] = shouldFlip
+		}
+
+	}
+
+	return endOfDayFloorMap, allAdjacentTiles
+}
+
+// Part1 of day 24
+func (d *Day24Computer) Part1(input shared.Input) (shared.Result, error) {
+
+	floorMap, _ := createFloorMap(input)
+
+	return fmt.Sprintf("%v", getBlackTiles(floorMap)), nil
 }
 
 // Part2 of day 24
 func (d *Day24Computer) Part2(input shared.Input) (shared.Result, error) {
+
+	floorMap, allToCheck := createFloorMap(input)
+
+	days := 100
+
+	for i := 1; i <= days; i++ {
+		floorMap, allToCheck = processDay(floorMap, allToCheck)
+		blackTiles := getBlackTiles(floorMap)
+		fmt.Printf("Day %v: %v\n", i, blackTiles)
+	}
 
 	return "", nil
 }
