@@ -2,6 +2,7 @@ package days
 
 import (
 	"fmt"
+	"math"
 
 	"../../shared"
 )
@@ -109,22 +110,15 @@ func getAdjacentTiles(tile coord) []coord {
 
 	adjacentTiles := make([]coord, 0)
 
-	adjacentTiles = append(adjacentTiles, coord{tile.x + 1, tile.y + 1}) // ne
-	adjacentTiles = append(adjacentTiles, coord{tile.x + 2, tile.y})     // e
-	adjacentTiles = append(adjacentTiles, coord{tile.x + 1, tile.y - 1}) // se
-	adjacentTiles = append(adjacentTiles, coord{tile.x - 1, tile.y - 1}) // sw
-	adjacentTiles = append(adjacentTiles, coord{tile.x - 2, tile.y})     // w
-	adjacentTiles = append(adjacentTiles, coord{tile.x - 1, tile.y + 1}) // nw
+	for x := -2; x <= 2; x++ {
+		for y := -1; y <= 1; y++ {
 
-	// for x := -2; x <= 2; x++ {
-	// 	for y := -1; y <= 1; y++ {
+			if !(x == 0 && y == 0) && (int(math.Abs(float64(x+y)))%2 == 0) {
 
-	// 		if !(x == 0 && y == 0) && (math.Abs(float64(x+y%2)) == 0) {
-
-	// 			adjacentTiles = append(adjacentTiles, coord{tile.x + x, tile.y + y})
-	// 		}
-	// 	}
-	// }
+				adjacentTiles = append(adjacentTiles, coord{tile.x + x, tile.y + y})
+			}
+		}
+	}
 
 	return adjacentTiles
 }
@@ -198,9 +192,7 @@ func (d *Day24Computer) Part2(input shared.Input) (shared.Result, error) {
 
 	for i := 1; i <= days; i++ {
 		floorMap, allToCheck = processDay(floorMap, allToCheck)
-		blackTiles := getBlackTiles(floorMap)
-		fmt.Printf("Day %v: %v\n", i, blackTiles)
 	}
 
-	return "", nil
+	return fmt.Sprintf("%v", getBlackTiles(floorMap)), nil
 }
