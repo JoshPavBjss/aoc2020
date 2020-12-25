@@ -1,6 +1,7 @@
 package days
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -19,32 +20,76 @@ func (r *rule) getRulePattern() string {
 
 	if r.subRules == nil {
 		return r.letter
-	}
+	} else if r.ruleNumber == 8 {
 
-	toReturn := ""
+		var rulePattern string
+		var ok bool
 
-	for i, subRule := range r.subRules {
+		if rulePattern, ok = (*r.cachedPatterns)[42]; !ok {
+			rule42 := (*r.ruleMap)[42]
+			rulePattern = rule42.getRulePattern()
+			(*r.cachedPatterns)[42] = rulePattern
+		}
 
-		for _, ruleNumber := range subRule {
-			theRule := (*r.ruleMap)[ruleNumber]
+		return (*r.cachedPatterns)[42] + "+" + "(?:"
 
-			var rulePattern string
-			var ok bool
+	} else if r.ruleNumber == 11 {
 
-			if rulePattern, ok = (*r.cachedPatterns)[ruleNumber]; !ok {
-				rulePattern = "(" + theRule.getRulePattern() + ")"
-				(*r.cachedPatterns)[ruleNumber] = rulePattern
+		var rule42Pattern string
+		var ok42 bool
+
+		var rule31Pattern string
+		var ok31 bool
+
+		if rule42Pattern, ok42 = (*r.cachedPatterns)[42]; !ok42 {
+			rule42 := (*r.ruleMap)[42]
+			rule42Pattern = rule42.getRulePattern()
+			(*r.cachedPatterns)[42] = rule42Pattern
+		}
+
+		if rule31Pattern, ok31 = (*r.cachedPatterns)[31]; !ok31 {
+			rule31 := (*r.ruleMap)[31]
+			rule31Pattern = rule31.getRulePattern()
+			(*r.cachedPatterns)[31] = rule31Pattern
+		}
+
+		toReturn := ""
+		max := 10
+		for i := 1; i <= max; i++ {
+			toReturn = toReturn + fmt.Sprintf("%s{%v}%s{%v}", rule42Pattern, i, rule31Pattern, i)
+			if i != max {
+				toReturn = toReturn + "|"
 			}
 
-			toReturn = toReturn + rulePattern
 		}
+		return toReturn
+	} else {
 
-		if i != len(r.subRules)-1 {
-			toReturn = toReturn + "|"
+		toReturn := ""
+
+		for i, subRule := range r.subRules {
+
+			for _, ruleNumber := range subRule {
+				theRule := (*r.ruleMap)[ruleNumber]
+
+				var rulePattern string
+				var ok bool
+
+				if rulePattern, ok = (*r.cachedPatterns)[ruleNumber]; !ok {
+					rulePattern = theRule.getRulePattern()
+					(*r.cachedPatterns)[ruleNumber] = rulePattern
+				}
+
+				toReturn = toReturn + rulePattern
+			}
+
+			if i != len(r.subRules)-1 {
+				toReturn = toReturn + "|"
+			}
 		}
+		return "(?:" + toReturn + ")"
+
 	}
-
-	return toReturn
 }
 
 func parseRules(input shared.Input) (map[int]rule, int) {

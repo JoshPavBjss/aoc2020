@@ -10,11 +10,13 @@ import (
 // Day19Computer solves day19
 type Day19Computer struct{}
 
+var printed = false
+
 func matchesRule0(ruleMap map[int]rule, message string) bool {
 
 	theRule := ruleMap[0]
 
-	regexPattern := regexp.MustCompile(theRule.getRulePattern())
+	regexPattern := regexp.MustCompile("(?m)^" + theRule.getRulePattern() + ")$")
 
 	return regexPattern.MatchString(message) && len(regexPattern.FindAllString(message, -1)[0]) == len(message)
 }
