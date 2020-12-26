@@ -67,7 +67,7 @@ func playRecursiveCombatRound(p1, p2 *deck, previousRounds *[]roundHistory, roun
 	}
 
 	if printGame2 {
-		fmt.Println("Player", roundWinner, "wins round", roundNum, "of game", gameNum, "!\n")
+		fmt.Print("Player", roundWinner, "wins round", roundNum, "of game", gameNum, "!\n\n")
 	}
 	if roundWinner == 1 {
 		p1.placeOnBottom(p1Card)
