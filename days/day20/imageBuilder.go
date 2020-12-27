@@ -55,9 +55,56 @@ func getFullImageLayout(tiles []Tile) [][]Tile {
 
 	fillInEdges(&cornerTiles, &edgeTiles, &middleTiles, *tiles[0].cachedOrientations, &fullLayout)
 
+	fillInMiddle(&middleTiles, *tiles[0].cachedOrientations, &fullLayout)
+
 	printFullLayoutIds(fullLayout)
 
 	return fullLayout
+}
+
+func fillInMiddle(middleTiles *[]int, cachedOrientations map[int][]Tile, fullLayout *[][]Tile) {
+
+	dimension := len(*fullLayout)
+
+	for j := 1; j < dimension-1; j++ {
+		for i := 1; i < dimension-1; i++ {
+			setMiddleTile(i, j, middleTiles, cachedOrientations, fullLayout)
+		}
+	}
+
+}
+
+func setMiddleTile(i, j int, middleTiles *[]int, cachedOrientations map[int][]Tile, fullLayout *[][]Tile) {
+
+	for _, middleTile := range *middleTiles {
+		for _, middleTileOrientation := range cachedOrientations[middleTile] {
+
+			left := (*fullLayout)[j][i-1]
+			above := (*fullLayout)[j-1][i]
+
+			if edgeMatches(left.getRightBorder(), middleTileOrientation.getLeftBorder()) && edgeMatches(above.getBottomBorder(), middleTileOrientation.getTopBorder()) {
+
+				// Also Check right if it's present
+				right := (*fullLayout)[j][i+1]
+
+				if right.id != 0 && !edgeMatches(right.getLeftBorder(), middleTileOrientation.getRightBorder()) {
+					continue
+				}
+
+				// Also check bottom if it's present
+				below := (*fullLayout)[j+1][i]
+
+				if below.id != 0 && !edgeMatches(below.getTopBorder(), middleTileOrientation.getBottomBorder()) {
+					continue
+				}
+
+				(*fullLayout)[j][i] = middleTileOrientation
+				removeFromSlice(middleTile, middleTiles)
+				return
+			}
+		}
+	}
+
 }
 
 func fillInTopRow(edgeTiles, middleTiles *[]int, fullLayout *[][]Tile) {
