@@ -57,7 +57,7 @@ func getFullImageLayout(tiles []Tile) [][]Tile {
 
 	fillInMiddle(&middleTiles, *tiles[0].cachedOrientations, &fullLayout)
 
-	printFullLayoutIds(fullLayout)
+	// printFullLayoutIds(fullLayout)
 
 	return fullLayout
 }

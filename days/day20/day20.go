@@ -6,6 +6,8 @@ import (
 	"../../shared"
 )
 
+const hashesInSeaMonster = 15
+
 // Day20Computer solves day20
 type Day20Computer struct{}
 
@@ -30,11 +32,11 @@ func (d *Day20Computer) Part2(input shared.Input) (shared.Result, error) {
 
 	tiles := createTilesFromInput(input)
 
-	fullImage := getFullImageLayout(tiles)
+	asTile := removeBordersFromImage(getFullImageLayout(tiles))
 
-	asTile := removeBordersFromImage(fullImage)
+	totalHashes := countHashes(asTile)
 
-	fmt.Println(asTile)
+	seaMonsters := countSeaMonstersInImage(asTile)
 
-	return "", nil
+	return fmt.Sprintf("%v", totalHashes-(seaMonsters*hashesInSeaMonster)), nil
 }
