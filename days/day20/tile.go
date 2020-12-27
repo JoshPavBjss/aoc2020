@@ -1,11 +1,18 @@
 package days
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+
+	"../../shared"
+)
 
 // Tile -
 type Tile struct {
-	id    int
-	image [][]rune
+	id                 int
+	image              [][]rune
+	cachedOrientations *map[int][]Tile
 }
 
 func (t *Tile) addImageData(line string) {
@@ -145,15 +152,14 @@ func (t *Tile) rotateClockwise() Tile {
 		}
 	}
 
-	return Tile{t.id, rotatedImage}
+	return Tile{t.id, rotatedImage, t.cachedOrientations}
 }
 
 func (t *Tile) getNumberOfMachingCombinations(other Tile) int {
 
 	matches := 0
-	otherOrientations := other.getAllOrientations()
-	for _, orientation := range t.getAllOrientations() {
-		for _, otherOrientation := range otherOrientations {
+	for _, orientation := range (*t.cachedOrientations)[t.id] {
+		for _, otherOrientation := range (*t.cachedOrientations)[other.id] {
 			if orientation.tileCanLineUp(otherOrientation) {
 				matches++
 			}
@@ -186,7 +192,7 @@ func (t *Tile) getFlippedInX() Tile {
 		newTileData[endIndex-i] = row
 	}
 
-	return Tile{t.id, newTileData}
+	return Tile{t.id, newTileData, t.cachedOrientations}
 }
 
 func (t *Tile) getFlippedInY() Tile {
@@ -201,5 +207,38 @@ func (t *Tile) getFlippedInY() Tile {
 		newTileData = append(newTileData, newRowData)
 	}
 
-	return Tile{t.id, newTileData}
+	return Tile{t.id, newTileData, t.cachedOrientations}
+}
+
+func getTileID(line string) int {
+	asInt, _ := strconv.Atoi(strings.ReplaceAll(line[0:len(line)-1], "Tile ", ""))
+	return asInt
+}
+
+func createTilesFromInput(input shared.Input) []Tile {
+
+	tiles := make([]Tile, 0)
+
+	cachedOrientations := make(map[int][]Tile)
+
+	var newTile Tile
+
+	for i, line := range input {
+
+		if strings.Contains(line, "Tile") {
+			newTile = Tile{id: getTileID(line), cachedOrientations: &cachedOrientations}
+		} else if line == "" {
+			tiles = append(tiles, newTile)
+			cachedOrientations[newTile.id] = newTile.getAllOrientations()
+		} else {
+			newTile.addImageData(line)
+
+			if i == len(input)-1 {
+				tiles = append(tiles, newTile)
+				cachedOrientations[newTile.id] = newTile.getAllOrientations()
+			}
+		}
+	}
+
+	return tiles
 }
