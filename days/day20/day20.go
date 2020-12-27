@@ -30,7 +30,11 @@ func (d *Day20Computer) Part2(input shared.Input) (shared.Result, error) {
 
 	tiles := createTilesFromInput(input)
 
-	getFullImageLayout(tiles)
+	fullImage := getFullImageLayout(tiles)
+
+	asTile := removeBordersFromImage(fullImage)
+
+	fmt.Println(asTile)
 
 	return "", nil
 }

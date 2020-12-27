@@ -62,6 +62,37 @@ func getFullImageLayout(tiles []Tile) [][]Tile {
 	return fullLayout
 }
 
+func removeBordersFromImage(imageWithBorders [][]Tile) Tile {
+
+	imageDataDimension := 8
+
+	imageData := make([][]rune, len(imageWithBorders)*imageDataDimension)
+
+	for i := 0; i < len(imageWithBorders)*imageDataDimension; i++ {
+		imageData[i] = make([]rune, len(imageWithBorders)*imageDataDimension)
+	}
+
+	for tileJ, row := range imageWithBorders {
+
+		for tileI, col := range row {
+			tileData := col.getImageData()
+
+			for dataJ, dataRow := range tileData {
+				for dataI, data := range dataRow {
+
+					j := (tileJ * imageDataDimension) + dataJ
+					i := (tileI * imageDataDimension) + dataI
+
+					imageData[j][i] = data
+				}
+			}
+
+		}
+	}
+
+	return Tile{image: imageData}
+}
+
 func fillInMiddle(middleTiles *[]int, cachedOrientations map[int][]Tile, fullLayout *[][]Tile) {
 
 	dimension := len(*fullLayout)
